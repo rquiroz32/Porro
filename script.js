@@ -60,9 +60,10 @@ $(document).ready(function () {
     ////// function to populate main weather section
     function mainWeather() {
         //building the query url based on the value of the searched city with Imperial Units
-        var queryURL = 'http://api.openweathermap.org/data/2.5/weather?q=' + $("#selectedCity").val().trim() + '&appid=' + apiKey + '&units=imperial'
-           // Get Weather and Populate sections
-           $.ajax({
+        var queryURL = 'http://api.openweathermap.org/data/2.5/weather?q=' + selectedCity + '&appid=' + apiKey + '&units=imperial'
+        
+        // Get Weather and Populate sections
+        $.ajax({
             url: queryURL,
             method: "GET",
             error: function (err) {
@@ -70,13 +71,14 @@ $(document).ready(function () {
                 alert("Please type in a valid city name");
             }
         }).then(function (response) {
+            
             $('#cityName').text(selectedCity + '  ' + currentDate)
             //$("#temp").text("Temperature: " + response.main.temp)
             $("#temp").text("Temperature: " + response.main.temp + '\xB0F')
             $("#humidity").text("Humidity: " + response.main.humidity + '%')
             $("#windSpeed").text("Wind Speed: " + response.wind.speed + 'MPH')
-          
-            
+
+
             console.log(response);
 
             //THIS IS WHERE THE UV INDEX AJAX CALL WILL GO 
@@ -84,6 +86,7 @@ $(document).ready(function () {
 
             //THIS IS WHERE THE 5-DAY FORECAST WILL GO
 
+            
         }) //closes ajax call
 
     }
@@ -105,22 +108,42 @@ $(document).ready(function () {
 
         ////////// BUILD OUT RECENT SEARCH LIST
         var recentSearch = $("<li>").text(selectedCity)
-        recentSearch.attr("class", "list-group-item")
+        recentSearch.attr("class", "recentCity list-group-item")
         $("#recentSearchList").prepend(recentSearch)
 
-
-
-
-        
-
-
+        ////// POPULATE MAIN WEATHER SECTION
         mainWeather();
-
 
 
     }); // closes on click of search
 
 
+    /////// ON CLICK OF RECENT SEARCHES//////////
+    $("#recentSearchList").on("click", function(event){
+        // TO DO FIGURE OUT HOW TO DO THIS IN JQUERY SHOULD SOMEHOW BE WITH $(this) but it wasn't working -__-   )
+        selectedCity = event.target.innerText
+        console.log("the value of this is " + temp)
+        mainWeather();
+
+
+    });// closes on click of recent searches
+
+
+
+        /*TO DO:
+
+        1). Check if there's an existing locally stored search, if so prepend them in order, AND PRESENT THE LAST SEARCHED CITY FORECAST WHEN THE PAGE IS FIRST LOADED
+            - perhaps save everything to local storage and render the page, with those values loaded from local storage instead of trying to make an API call since it's a-synchronus
+        2). Figure out the other two api calls
+        3). Should dynamically prepend each of the weather days in 5 day forecast to section below
+        4). need to figure out the icons
+        5). need to figure out how to incrememnt in moment.js (or maybe just get it from the api event who knows)
+        6). need to color code the UV index portion
+        7). NEED TO ADD AN ICON NEXT TO THE H1 PORTION
+        8). FIX SEARCH BUTTON SO IT'S POSITION IS ABSOLUTE COMPARED TO THE SEARCH BAR
+        10). Need to cap recent searches at 10. (nice to have).
+
+        */
 
 
 
