@@ -48,6 +48,7 @@ var apiKey = '5d3e08b832df233deba9815eee424c26'
 var selectedCity
 var searchBtn = $("#searchBtn")
 var currentDate = moment().format("MM[/]DD[/]YYYY")
+var searchHistoryArray = []
 
 var cityLat
 var cityLong
@@ -55,6 +56,7 @@ var cityLong
 // doc ready function
 $(document).ready(function () {
     console.log("js load success")
+    searchHistory();
 
 
 
@@ -74,29 +76,26 @@ $(document).ready(function () {
         }).then(function (response) {
 
             $('#cityName').text(selectedCity + '  ' + currentDate)
-            //$("#temp").text("Temperature: " + response.main.temp)
             $("#temp").text("Temperature: " + response.main.temp + '\xB0F')
             $("#humidity").text("Humidity: " + response.main.humidity + '%')
             $("#windSpeed").text("Wind Speed: " + response.wind.speed + 'MPH')
-            cityLat = response.coord.lat            
-            cityLong    = response.coord.lon
-
-
+            cityLat = response.coord.lat
+            cityLong = response.coord.lon
 
             console.log(response);
 
-            
-            var fiveDayUrl = 'http://api.openweathermap.org/data/2.5/forecast?q='+ selectedCity+ '&appid='+ apiKey
-            var uvIndexUrl = 'https://api.openweathermap.org/data/2.5/uvi?lat='+cityLat+'&lon='+cityLong+'&appid='+ apiKey
+
+            var fiveDayUrl = 'http://api.openweathermap.org/data/2.5/forecast?q=' + selectedCity + '&appid=' + apiKey
+            var uvIndexUrl = 'https://api.openweathermap.org/data/2.5/uvi?lat=' + cityLat + '&lon=' + cityLong + '&appid=' + apiKey
             //THIS IS WHERE THE UV INDEX AJAX CALL WILL GO 
             $.ajax({
                 url: uvIndexUrl,
                 method: "GET"
 
-            }).then(function(response){
+            }).then(function (response) {
                 console.log('the next line is the uv index response')
                 console.log(response)
-                $("#uvIndex").text("UV Index: " + response.wind.speed + 'MPH')
+                $("#uvIndex").text("UV Index: " + response.value)
 
             });
 
@@ -106,7 +105,7 @@ $(document).ready(function () {
                 url: fiveDayUrl,
                 method: "GET"
 
-            }).then(function(response){
+            }).then(function (response) {
                 console.log("the next line is the 5 day forecast response")
                 console.log(response)
             });
@@ -117,18 +116,35 @@ $(document).ready(function () {
 
 
 
-    var searchHistoryArray = []
+
 
 
 
     function searchHistory() {
 
-        ////////// BUILD OUT RECENT SEARCH LIST
-        var recentSearch = $("<li>").text(selectedCity)
-        recentSearch.attr("class", "recentCity list-group-item")
-        $("#recentSearchList").prepend(recentSearch)
-        searchHistoryArray.push(selectedCity)
-        localStorage.setItem("searchHistory", JSON.stringify(searchHistoryArray))
+        
+            if (localStorage.getItem("searchHistory")) {
+
+                searchHistoryArray = JSON.parse(localStorage.getItem("searchHistory"))
+                console.log("search history array value is: " + searchHistoryArray[i])
+                for (var i = 0; i < searchHistoryArray.length; i++) {
+
+                    var recentSearch = $("<li>").text(searchHistoryArray[i])
+                    recentSearch.attr("class", "recentCity list-group-item")
+                    $("#recentSearchList").prepend(recentSearch)
+
+                }
+
+            }
+
+
+            ////////// BUILD OUT RECENT SEARCH LIST
+            var recentSearch = $("<li>").text(selectedCity)
+            recentSearch.attr("class", "recentCity list-group-item")
+            $("#recentSearchList").prepend(recentSearch)
+            searchHistoryArray.push(selectedCity)
+            localStorage.setItem("searchHistory", JSON.stringify(searchHistoryArray))
+
 
         
     }
@@ -176,7 +192,7 @@ $(document).ready(function () {
 
 
     /*TO DO:
-
+ 
     1). Check if there's an existing locally stored search, if so prepend them in order, AND PRESENT THE LAST SEARCHED CITY FORECAST WHEN THE PAGE IS FIRST LOADED
         - perhaps save everything to local storage and render the page, with those values loaded from local storage instead of trying to make an API call since it's a-synchronus
     2). Figure out the other two api calls
@@ -187,7 +203,7 @@ $(document).ready(function () {
     7). NEED TO ADD AN ICON NEXT TO THE H1 PORTION
     8). FIX SEARCH BUTTON SO IT'S POSITION IS ABSOLUTE COMPARED TO THE SEARCH BAR
     10). Need to cap recent searches at 10. (nice to have).
-
+ 
     */
 
 
