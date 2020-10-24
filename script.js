@@ -43,20 +43,36 @@ You are required to submit the following for review:
 - - -
 F© 2019 Trilogy Education Services, a 2U, Inc. brand. All Rights Reserved.
  */
-////////// ASSIGNMENT CODE///////////
-var apiKey = '5d3e08b832df233deba9815eee424c26'
-var selectedCity
-var searchBtn = $("#searchBtn")
-var currentDate = moment().format("MM[/]DD[/]YYYY")
-var searchHistoryArray = []
 
-var cityLat
-var cityLong
+
 
 // doc ready function
 $(document).ready(function () {
+
+
+
+    ////////// ASSIGNMENT CODE///////////
+
+    var apiKey = '5d3e08b832df233deba9815eee424c26'
+    var selectedCity
+    var searchBtn = $("#searchBtn")
+    var currentDate = moment().format("MM[/]DD[/]YYYY")
+    var searchHistoryArray = []
+
+    var cityLat
+    var cityLong
+
+
     console.log("js load success")
-    searchHistory();
+
+    if (localStorage.getItem("searchHistory") != null || localStorage.getItem("searchHistory") != "") {
+        console.log("render searchHistory function called")
+        renderSearchHistory();
+    }
+
+    else {
+        localStorage.clear();
+    }
 
 
 
@@ -117,36 +133,35 @@ $(document).ready(function () {
 
 
 
+    function renderSearchHistory() {
 
+        if (localStorage.getItem("searchHistory")) {
+
+            searchHistoryArray = JSON.parse(localStorage.getItem("searchHistory"))
+            console.log("search history array value is: " + searchHistoryArray[i])
+            for (var i = 0; i < searchHistoryArray.length; i++) {
+
+                var recentSearch = $("<li>").text(searchHistoryArray[i])
+                recentSearch.attr("class", "recentCity list-group-item")
+                $("#recentSearchList").prepend(recentSearch)
+
+            }
+
+        }
+    }
 
 
     function searchHistory() {
 
-        
-            if (localStorage.getItem("searchHistory")) {
-
-                searchHistoryArray = JSON.parse(localStorage.getItem("searchHistory"))
-                console.log("search history array value is: " + searchHistoryArray[i])
-                for (var i = 0; i < searchHistoryArray.length; i++) {
-
-                    var recentSearch = $("<li>").text(searchHistoryArray[i])
-                    recentSearch.attr("class", "recentCity list-group-item")
-                    $("#recentSearchList").prepend(recentSearch)
-
-                }
-
-            }
+        ////////// BUILD OUT RECENT SEARCH LIST
+        var recentSearch = $("<li>").text(selectedCity)
+        recentSearch.attr("class", "recentCity list-group-item")
+        $("#recentSearchList").prepend(recentSearch)
+        searchHistoryArray.push(selectedCity)
+        localStorage.setItem("searchHistory", JSON.stringify(searchHistoryArray))
 
 
-            ////////// BUILD OUT RECENT SEARCH LIST
-            var recentSearch = $("<li>").text(selectedCity)
-            recentSearch.attr("class", "recentCity list-group-item")
-            $("#recentSearchList").prepend(recentSearch)
-            searchHistoryArray.push(selectedCity)
-            localStorage.setItem("searchHistory", JSON.stringify(searchHistoryArray))
 
-
-        
     }
 
 
@@ -164,9 +179,10 @@ $(document).ready(function () {
 
 
 
-
-        searchHistory();
-
+        if (selectedCity != null || selectedCity != '') {
+            console.log("saerch history function called on click")
+            searchHistory();
+        }
 
 
 
