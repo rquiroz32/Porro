@@ -62,8 +62,8 @@ $(document).ready(function () {
     var cityLat
     var cityLong
 
-    var fiveDayArray = []
-    var newfiveDayArray = []
+    
+    
 
     if (localStorage.getItem("searchHistory")) {
         console.log("render searchHistory function called")
@@ -72,7 +72,95 @@ $(document).ready(function () {
 
 
 
+    function fiveDayForecast() {
+        var fiveDayArray = []
 
+        // empty five day section
+        $("div").remove('.forecastDiv');
+
+
+        //THIS IS WHERE THE 5-DAY FORECAST WILL GO
+        var fiveDayUrl = 'http://api.openweathermap.org/data/2.5/forecast?q=' + selectedCity + '&units=imperial&appid=' + apiKey
+
+        $.ajax({
+            url: fiveDayUrl,
+            method: "GET"
+
+        }).then(function (response) {
+            console.log("the next line is the 5 day forecast response")
+            console.log(response)
+            for (i = 0; i < response.list.length; i++) {
+                var fiveDayObject
+                
+                
+                // if the substring at position 11 up to but not including position 19 === Noon, build out 5 day forecast
+                // SIDE NOTE FOR GRADER: I learned this concept as a slice with a start,stop,step argument in Python before taking this class
+                if (response.list[i].dt_txt.substring(11,19) ==='12:00:00'){
+
+                    fiveDayObject = {
+                        icon: response.list[i].weather[0].icon,
+                        temp:response.list[i].main.temp ,
+                        humidity: response.list[i].main.humidity,
+                        date:  response.list[i].dt_txt.substring(0,11)
+                    }
+
+                    fiveDayArray.push(fiveDayObject)
+                    console.log(fiveDayArray)
+                }
+                
+
+            }// closes for loop in 5-day forecast
+
+
+            //use array of 5 day forecast to populate html elements in 5 day forecast section
+            for (i=0; i<fiveDayArray.length;i++){
+
+                var forecastDiv = $('<div>').addClass("col-sm-2 forecastDiv")
+                var forecastCard = $("<div>").addClass("card text-white bg-primary mb-3 forecastCard")
+                forecastCard.attr("style", "max-width: 18rem;")
+                forecastDiv.append(forecastCard)
+                
+                
+                var forecastCardBody = $('<div>').addClass("card-body forecastCardBody")
+                forecastCard.append(forecastCardBody)
+
+                var forecastCardTitle = $("<h5>").addClass("card-title forecastCardTitle forecastCardTime")
+                var forecastCardTemp = $("<p>").addClass("card-text forecastCardTemp")
+                var forecastCardIcon = $("<p>").addClass("card-text forecastCardIcon")
+                var forecastCardHumidity = $("<p>").addClass("card-text forecastCardHumidity")
+                
+                forecastCardBody.append(forecastCardTitle)
+                forecastCardBody.append(forecastCardTemp)
+                forecastCardBody.append(forecastCardIcon)
+                forecastCardBody.append(forecastCardHumidity)
+
+                forecastCardTemp.text( "Temp: " + fiveDayObject.temp + '\xB0F') 
+                forecastCardHumidity.text( "Humidity: " + fiveDayObject.humidity + "%") 
+                
+
+                
+                
+                //var forecastDate = moment(startdate, "DD-MM-YYYY").add([i], 'days');
+                // console.log("forecast date is" + forecastDate)
+
+                //var forecastDivTemp = forecastDiv.$("p").text("test")
+                //forecastDivTemp = fiveDayArray[i].temp
+
+
+                $("#fiveDayContainer").append(forecastDiv)
+            }
+
+
+
+
+
+
+        }); // closes ajax for 5 day forecast
+
+
+
+
+    };// closes five day forecast function
 
 
     ////// function to populate main weather section
@@ -127,58 +215,7 @@ $(document).ready(function () {
     } // closes main weather function
 
 
-    function fiveDayForecast() {
-
-        //THIS IS WHERE THE 5-DAY FORECAST WILL GO
-        var fiveDayUrl = 'http://api.openweathermap.org/data/2.5/forecast?q=' + selectedCity + '&units=imperial&appid=' + apiKey
-
-        $.ajax({
-            url: fiveDayUrl,
-            method: "GET"
-
-        }).then(function (response) {
-            console.log("the next line is the 5 day forecast response")
-            console.log(response)
-            for (i = 0; i < response.list.length; i++) {
-                var fiveDayObject
-                
-                
-                // if the substring at position 11 up to but not including position 19 === Noon, build out 5 day forecast
-                // SIDE NOTE FOR GRADER: I learned this concept as a slice with a start,stop,step argument in Python before taking this class
-                if (response.list[i].dt_txt.substring(11,19) ==='12:00:00'){
-
-                    fiveDayObject = {
-                        icon: response.list[i].weather[0].icon,
-                        temp:response.list[i].main.temp ,
-                        humidity: response.list[i].main.humidity
-                    }
-
-                    fiveDayArray.push(fiveDayObject)
-                    console.log(fiveDayArray)
-                }
-                
-
-            }// closes for loop in 5-day forecast
-
-
-            //use array of 5 day forecast to populate html elements in 5 day forecast section
-            for (i=0; i<fiveDayArray.length;i++){
-
-                
-
-            }
-
-
-
-
-
-
-        }); // closes ajax for 5 day forecast
-
-
-
-
-    };// closes five day forecast function
+    
 
 
 
