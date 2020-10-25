@@ -48,7 +48,7 @@ F© 2019 Trilogy Education Services, a 2U, Inc. brand. All Rights Reserved.
 
 // doc ready function
 $(document).ready(function () {
-
+    console.log("js load success, doc is ready")
 
 
     ////////// ASSIGNMENT CODE///////////
@@ -62,17 +62,16 @@ $(document).ready(function () {
     var cityLat
     var cityLong
 
+    var emptyTest = []
+    var newEmptyTest = []
 
-    console.log("js load success")
-
-    if (localStorage.getItem("searchHistory") != null || localStorage.getItem("searchHistory") != "") {
+    if (localStorage.getItem("searchHistory")) {
         console.log("render searchHistory function called")
         renderSearchHistory();
     }
 
-    else {
-        localStorage.clear();
-    }
+
+
 
 
 
@@ -101,7 +100,7 @@ $(document).ready(function () {
             console.log(response);
 
 
-            var fiveDayUrl = 'http://api.openweathermap.org/data/2.5/forecast?q=' + selectedCity + '&appid=' + apiKey
+
             var uvIndexUrl = 'https://api.openweathermap.org/data/2.5/uvi?lat=' + cityLat + '&lon=' + cityLong + '&appid=' + apiKey
             //THIS IS WHERE THE UV INDEX AJAX CALL WILL GO 
             $.ajax({
@@ -115,20 +114,62 @@ $(document).ready(function () {
 
             });
 
-            //THIS IS WHERE THE 5-DAY FORECAST WILL GO
 
-            $.ajax({
-                url: fiveDayUrl,
-                method: "GET"
 
-            }).then(function (response) {
-                console.log("the next line is the 5 day forecast response")
-                console.log(response)
-            });
+
 
         }) //closes ajax call
 
+
+        fiveDayForecast();
+
+
     } // closes main weather function
+
+
+    function fiveDayForecast() {
+
+        //THIS IS WHERE THE 5-DAY FORECAST WILL GO
+        var fiveDayUrl = 'http://api.openweathermap.org/data/2.5/forecast?q=' + selectedCity + '&appid=' + apiKey
+
+        $.ajax({
+            url: fiveDayUrl,
+            method: "GET"
+
+        }).then(function (response) {
+            console.log("the next line is the 5 day forecast response")
+            console.log(response)
+            for (i = 0; i < response.list.length; i++) {
+
+                emptyTest.push(response.list[i].dt_txt)
+
+
+
+                // if (response.list[i].dt_txt.splice(11) === '12:00:00') {
+                //            console.log("this is the noon forecast for a certain day")
+
+
+                //     emptyTest.push(response.list.dt_txt)
+                //     console.log("the type of emptyTest is " +typeof(emptyTest) + ' and the value is' + emptyTest)
+                //     //newEmptyTest.push(emptyTest[i].splice(11))
+
+                //    // if (response.list.dt_txt.splice(11) === '12:00:00') {
+                //      //   console.log("this is the noon forecast for a certain day")
+
+                //     //}
+
+                console.log(emptyTest)
+
+
+
+
+            }// closes for loop in 5-day forecast
+        }); // closes ajax for 5 day forecast
+
+
+
+
+    };// closes five day forecast function
 
 
 
@@ -138,9 +179,9 @@ $(document).ready(function () {
         if (localStorage.getItem("searchHistory")) {
 
             searchHistoryArray = JSON.parse(localStorage.getItem("searchHistory"))
-            console.log("search history array value is: " + searchHistoryArray[i])
-            for (var i = 0; i < searchHistoryArray.length; i++) {
 
+            for (var i = 0; i < searchHistoryArray.length; i++) {
+                console.log("search history array value is: " + searchHistoryArray[i])
                 var recentSearch = $("<li>").text(searchHistoryArray[i])
                 recentSearch.attr("class", "recentCity list-group-item")
                 $("#recentSearchList").prepend(recentSearch)
@@ -161,7 +202,6 @@ $(document).ready(function () {
         localStorage.setItem("searchHistory", JSON.stringify(searchHistoryArray))
 
 
-
     }
 
 
@@ -173,16 +213,16 @@ $(document).ready(function () {
         selectedCity = $("#selectedCity").val().trim()
 
         //check if there's a value, if not alert and ask for one
-        if (selectedCity === '' || selectedCity === null || selectedCity === undefined) {
+        if (!selectedCity) {
             alert("Please enter in the name of a city")
+            return
         }//closes if statement
 
 
 
-        if (selectedCity != null || selectedCity != '') {
-            console.log("saerch history function called on click")
-            searchHistory();
-        }
+
+        console.log("saerch history function called on click")
+        searchHistory();
 
 
 
@@ -210,8 +250,9 @@ $(document).ready(function () {
     /*TO DO:
  
     1). Check if there's an existing locally stored search, if so prepend them in order, AND PRESENT THE LAST SEARCHED CITY FORECAST WHEN THE PAGE IS FIRST LOADED
-        - perhaps save everything to local storage and render the page, with those values loaded from local storage instead of trying to make an API call since it's a-synchronus
+        DONE
     2). Figure out the other two api calls
+
     3). Should dynamically prepend each of the weather days in 5 day forecast to section below
     4). need to figure out the icons
     5). need to figure out how to incrememnt in moment.js (or maybe just get it from the api event who knows)
