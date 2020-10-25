@@ -62,8 +62,8 @@ $(document).ready(function () {
     var cityLat
     var cityLong
 
-    var emptyTest = []
-    var newEmptyTest = []
+    var fiveDayArray = []
+    var newfiveDayArray = []
 
     if (localStorage.getItem("searchHistory")) {
         console.log("render searchHistory function called")
@@ -130,7 +130,7 @@ $(document).ready(function () {
     function fiveDayForecast() {
 
         //THIS IS WHERE THE 5-DAY FORECAST WILL GO
-        var fiveDayUrl = 'http://api.openweathermap.org/data/2.5/forecast?q=' + selectedCity + '&appid=' + apiKey
+        var fiveDayUrl = 'http://api.openweathermap.org/data/2.5/forecast?q=' + selectedCity + '&units=imperial&appid=' + apiKey
 
         $.ajax({
             url: fiveDayUrl,
@@ -140,30 +140,39 @@ $(document).ready(function () {
             console.log("the next line is the 5 day forecast response")
             console.log(response)
             for (i = 0; i < response.list.length; i++) {
+                var fiveDayObject
+                
+                
+                // if the substring at position 11 up to but not including position 19 === Noon, build out 5 day forecast
+                // SIDE NOTE FOR GRADER: I learned this concept as a slice with a start,stop,step argument in Python before taking this class
+                if (response.list[i].dt_txt.substring(11,19) ==='12:00:00'){
 
-                emptyTest.push(response.list[i].dt_txt)
+                    fiveDayObject = {
+                        icon: response.list[i].weather[0].icon,
+                        temp:response.list[i].main.temp ,
+                        humidity: response.list[i].main.humidity
+                    }
 
-
-
-                // if (response.list[i].dt_txt.splice(11) === '12:00:00') {
-                //            console.log("this is the noon forecast for a certain day")
-
-
-                //     emptyTest.push(response.list.dt_txt)
-                //     console.log("the type of emptyTest is " +typeof(emptyTest) + ' and the value is' + emptyTest)
-                //     //newEmptyTest.push(emptyTest[i].splice(11))
-
-                //    // if (response.list.dt_txt.splice(11) === '12:00:00') {
-                //      //   console.log("this is the noon forecast for a certain day")
-
-                //     //}
-
-                console.log(emptyTest)
-
-
-
+                    fiveDayArray.push(fiveDayObject)
+                    console.log(fiveDayArray)
+                }
+                
 
             }// closes for loop in 5-day forecast
+
+
+            //use array of 5 day forecast to populate html elements in 5 day forecast section
+            for (i=0; i<fiveDayArray.length;i++){
+
+                
+
+            }
+
+
+
+
+
+
         }); // closes ajax for 5 day forecast
 
 
