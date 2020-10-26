@@ -16,7 +16,7 @@ $(document).ready(function () {
 
 
 
-// If there's existing search history render it to the page
+    // If there's existing search history render it to the page
     if (localStorage.getItem("searchHistory")) {
         console.log("render searchHistory function called")
         renderSearchHistory();
@@ -24,7 +24,7 @@ $(document).ready(function () {
 
 
 
-// function definition to populate cards with 5 day forecast
+    // function definition to populate cards with 5 day forecast
     function fiveDayForecast() {
         //reset the array that's used to store the days and forecast.
         var fiveDayArray = []
@@ -36,15 +36,15 @@ $(document).ready(function () {
         //Build queryURL for 5 day forecast
         var fiveDayUrl = 'http://api.openweathermap.org/data/2.5/forecast?q=' + selectedCity + '&units=imperial&appid=' + apiKey
 
-        
+
         $.ajax({
             url: fiveDayUrl,
             method: "GET"
 
         }).then(function (response) {
-                        
+
             for (i = 0; i < response.list.length; i++) {
-                
+
                 var fiveDayObject
 
                 // if the substring at position 11 up to but not including position 19 === Noon, build out 5 day forecast
@@ -93,12 +93,12 @@ $(document).ready(function () {
                 tempDateThing = tempDateThing.format("MM[/]DD[/]YYYY")
 
                 forecastCardTitle.text(tempDateThing)
-                /
-                forecastCardIcon.attr("src", forecastCardIconURL)
+                    /
+                    forecastCardIcon.attr("src", forecastCardIconURL)
                 forecastCardTemp.text("Temp: " + fiveDayArray[i].temp + '\xB0F')
                 forecastCardHumidity.text("Humidity: " + fiveDayArray[i].humidity + "%")
 
-              
+
                 $("#fiveDayContainer").append(forecastDiv)
 
 
@@ -128,9 +128,9 @@ $(document).ready(function () {
             console.log("main weather response is below")
             console.log(response)
             var mainWeatherIcon = response.weather[0].icon
-            var mainWeatherIconUrl = 'http://openweathermap.org/img/wn/' + mainWeatherIcon  + '@2x.png'
-            
-            $('#cityName').text(selectedCity + '  ' + currentDate )
+            var mainWeatherIconUrl = 'http://openweathermap.org/img/wn/' + mainWeatherIcon + '@2x.png'
+
+            $('#cityName').text(selectedCity + '  ' + currentDate)
             $("#mainWeatherIcon").attr("src", mainWeatherIconUrl)
             $("#temp").text("Temperature: " + response.main.temp + '\xB0F')
             $("#humidity").text("Humidity: " + response.main.humidity + '%')
@@ -143,7 +143,7 @@ $(document).ready(function () {
 
             // Query URL for nested UV API call
             var uvIndexUrl = 'https://api.openweathermap.org/data/2.5/uvi?lat=' + cityLat + '&lon=' + cityLong + '&appid=' + apiKey
-            
+
             $.ajax({
                 url: uvIndexUrl,
                 method: "GET"
@@ -237,13 +237,31 @@ $(document).ready(function () {
     // function to build out recent search list and store it in search history
     function searchHistory() {
 
-        ////////// BUILD OUT RECENT SEARCH LIST
-        var recentSearch = $("<li>").text(selectedCity)
-        recentSearch.attr("class", "recentCity list-group-item")
-        $("#recentSearchList").prepend(recentSearch)
-        searchHistoryArray.push(selectedCity)
-        localStorage.setItem("searchHistory", JSON.stringify(searchHistoryArray))
+        //limit recent searches to 10 and if it reaches 10 or exceeds it then reload so render search only writes 10 to page
+        if (searchHistoryArray.length >= 10) {
 
+            // var firstIndex = '.'+searchHistoryArray[0].trim()            
+            // console.warn("first index value is " +firstIndex)
+            // $("li").remove(String(firstIndex));
+
+            searchHistoryArray.shift()
+            var recentSearch = $("<li>").text(selectedCity)
+            recentSearch.attr("class", "recentCity list-group-item " + selectedCity.trim())
+            $("#recentSearchList").prepend(recentSearch)
+            searchHistoryArray.push(selectedCity)
+            localStorage.setItem("searchHistory", JSON.stringify(searchHistoryArray))
+            window.location.reload()
+
+        }
+
+        else {
+            ////////// BUILD OUT RECENT SEARCH LIST
+            var recentSearch = $("<li>").text(selectedCity)
+            recentSearch.attr("class", "recentCity list-group-item " + selectedCity.trim())
+            $("#recentSearchList").prepend(recentSearch)
+            searchHistoryArray.push(selectedCity)
+            localStorage.setItem("searchHistory", JSON.stringify(searchHistoryArray))
+        }
 
     }
 
@@ -294,7 +312,6 @@ $(document).ready(function () {
     10). Need to cap recent searches at 10. (nice to have).
  
     */
-
 
 
 

@@ -1,1 +1,25 @@
-/*just some test data*/
+.low {
+    background-color: green;
+    color: white;
+}
+
+.moderate {
+    background-color: yellow;
+    /*NOT SETTING TEXT COLOR TO WHITE BECAUSE IT'S HARD TO READ*/
+}
+
+.high {
+    background-color: orange;
+    color: white;
+
+}
+
+.veryHigh {
+    background-color: red;
+    color: white;
+}
+
+.extreme {
+    background-color: purple;
+    color: white;
+}
