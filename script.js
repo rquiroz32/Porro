@@ -1,51 +1,3 @@
-/*# 06 Server-Side APIs: Weather Dashboard
-
-Developers are often tasked with retrieving data from another application's API and using it in the context of their own. Third-party APIs allow developers to access their data and functionality by making requests with specific parameters to a URL. Your challenge is to build a weather dashboard that will run in the browser and feature dynamically updated HTML and CSS.
-
-Use the [OpenWeather API](https://openweathermap.org/api) to retrieve weather data for cities. The documentation includes a section called "How to start" that will provide basic setup and usage instructions. Use `localStorage` to store any persistent data.
-
-## User Story
-
-```
-Build a weather dashoard 
-```
-
-## Acceptance Criteria
-
-```
-Provide the user the ability to search for a city.
-
-- Search bar that on click provides:
-
-    - Show the current and future conditions for that city.
-    - Present the city name, the date, an icon representation of weather conditions, the temperature, 
-    the humidity the wind speed, and the UV index (the color should indicate whether the conditions 
-    are favorable, moderate, or severe)
-Add that city to the search history.
-Show the 5-day forecast that displays the date, an icon representation of weather conditions, 
-the temperature, and the humidity.
-Clicking on a city in the search history present the current and future conditions for that city.
-Save search history to local storage and when loading the page present the last searched city forecast
-```
-
-The following image demonstrates the application functionality:
-
-![weather dashboard demo](./Assets/06-server-side-apis-homework-demo.png)
-
-## Review
-
-You are required to submit the following for review:
-
-* The URL of the deployed application.
-
-* The URL of the GitHub repository. Give the repository a unique name and include a README describing the project.
-
-- - -
-F© 2019 Trilogy Education Services, a 2U, Inc. brand. All Rights Reserved.
- */
-
-
-
 // doc ready function
 $(document).ready(function () {
     console.log("js load success, doc is ready")
@@ -62,102 +14,98 @@ $(document).ready(function () {
     var cityLat
     var cityLong
 
-    
-    
 
+
+// If there's existing search history render it to the page
     if (localStorage.getItem("searchHistory")) {
         console.log("render searchHistory function called")
         renderSearchHistory();
-    }
+    } //closes check for existing search history
 
 
 
+// function definition to populate cards with 5 day forecast
     function fiveDayForecast() {
+        //reset the array that's used to store the days and forecast.
         var fiveDayArray = []
 
         // empty five day section
         $("div").remove('.forecastDiv');
 
 
-        //THIS IS WHERE THE 5-DAY FORECAST WILL GO
+        //Build queryURL for 5 day forecast
         var fiveDayUrl = 'http://api.openweathermap.org/data/2.5/forecast?q=' + selectedCity + '&units=imperial&appid=' + apiKey
 
+        
         $.ajax({
             url: fiveDayUrl,
             method: "GET"
 
         }).then(function (response) {
-            console.log("the next line is the 5 day forecast response")
-            console.log(response)
+                        
             for (i = 0; i < response.list.length; i++) {
+                
                 var fiveDayObject
-                
-                
+
                 // if the substring at position 11 up to but not including position 19 === Noon, build out 5 day forecast
-                // SIDE NOTE FOR GRADER: I learned this concept as a slice with a start,stop,step argument in Python before taking this class
-                if (response.list[i].dt_txt.substring(11,19) ==='12:00:00'){
+                // SIDE NOTE FOR GRADER: I learned this concept as  slice with a start,stop,step argument in Python before taking this class
+                if (response.list[i].dt_txt.substring(11, 19) === '12:00:00') {
 
                     fiveDayObject = {
                         icon: response.list[i].weather[0].icon,
-                        temp:response.list[i].main.temp ,
+                        temp: response.list[i].main.temp,
                         humidity: response.list[i].main.humidity,
-                        date:  response.list[i].dt_txt.substring(0,11)
+                        date: response.list[i].dt_txt.substring(0, 11)
                     }
 
                     fiveDayArray.push(fiveDayObject)
                     console.log(fiveDayArray)
                 }
-                
+
 
             }// closes for loop in 5-day forecast
 
 
             //use array of 5 day forecast to populate html elements in 5 day forecast section
-            for (i=0; i<fiveDayArray.length;i++){
+            for (i = 0; i < fiveDayArray.length; i++) {
 
                 var forecastDiv = $('<div>').addClass("col-sm-2 forecastDiv")
                 var forecastCard = $("<div>").addClass("card text-white bg-primary mb-3 forecastCard")
                 forecastCard.attr("style", "max-width: 18rem;")
                 forecastDiv.append(forecastCard)
-                
-                
+
+
                 var forecastCardBody = $('<div>').addClass("card-body forecastCardBody")
                 forecastCard.append(forecastCardBody)
 
                 var forecastCardTitle = $("<h5>").addClass("card-title forecastCardTitle forecastCardTime")
                 var forecastCardTemp = $("<p>").addClass("card-text forecastCardTemp")
-                var forecastCardIcon = $("<p>").addClass("card-text forecastCardIcon")
+                var forecastCardIcon = $("<img>").addClass("card-text forecastCardIcon")
                 var forecastCardHumidity = $("<p>").addClass("card-text forecastCardHumidity")
-                
+                var forecastCardIconURL = 'http://openweathermap.org/img/wn/' + fiveDayArray[i].icon + '@2x.png'
                 forecastCardBody.append(forecastCardTitle)
-                forecastCardBody.append(forecastCardTemp)
                 forecastCardBody.append(forecastCardIcon)
+                forecastCardBody.append(forecastCardTemp)
                 forecastCardBody.append(forecastCardHumidity)
 
-                forecastCardTemp.text( "Temp: " + fiveDayObject.temp + '\xB0F') 
-                forecastCardHumidity.text( "Humidity: " + fiveDayObject.humidity + "%") 
-                
+                var tempCounter = i + 1
+                var tempDateThing = moment().add(tempCounter, 'days')
+                tempDateThing = tempDateThing.format("MM[/]DD[/]YYYY")
 
-                
-                
-                //var forecastDate = moment(startdate, "DD-MM-YYYY").add([i], 'days');
-                // console.log("forecast date is" + forecastDate)
+                forecastCardTitle.text(tempDateThing)
+                /
+                forecastCardIcon.attr("src", forecastCardIconURL)
+                forecastCardTemp.text("Temp: " + fiveDayArray[i].temp + '\xB0F')
+                forecastCardHumidity.text("Humidity: " + fiveDayArray[i].humidity + "%")
 
-                //var forecastDivTemp = forecastDiv.$("p").text("test")
-                //forecastDivTemp = fiveDayArray[i].temp
-
-
+              
                 $("#fiveDayContainer").append(forecastDiv)
-            }
 
 
-
-
+            }//closes array for building out 5dayForecast
 
 
         }); // closes ajax for 5 day forecast
-
-
 
 
     };// closes five day forecast function
@@ -177,8 +125,12 @@ $(document).ready(function () {
                 alert("Please type in a valid city name");
             }
         }).then(function (response) {
+            console.log("main weather response is below")
+            console.log(response)
+            
+            var mainWeatherIconUrl = 'http://openweathermap.org/img/wn/' + response.weather[0].icon + '@2x.png'
 
-            $('#cityName').text(selectedCity + '  ' + currentDate)
+            $('#cityName').text(selectedCity + '  ' + currentDate )
             $("#temp").text("Temperature: " + response.main.temp + '\xB0F')
             $("#humidity").text("Humidity: " + response.main.humidity + '%')
             $("#windSpeed").text("Wind Speed: " + response.wind.speed + 'MPH')
@@ -188,9 +140,9 @@ $(document).ready(function () {
             console.log(response);
 
 
-
+            // Query URL for nested UV API call
             var uvIndexUrl = 'https://api.openweathermap.org/data/2.5/uvi?lat=' + cityLat + '&lon=' + cityLong + '&appid=' + apiKey
-            //THIS IS WHERE THE UV INDEX AJAX CALL WILL GO 
+            
             $.ajax({
                 url: uvIndexUrl,
                 method: "GET"
@@ -198,28 +150,69 @@ $(document).ready(function () {
             }).then(function (response) {
                 console.log('the next line is the uv index response')
                 console.log(response)
+                // populate uvIndex element with the uv index value
                 $("#uvIndex").text("UV Index: " + response.value)
+                // Conditional checks to dynamically apply styling for uvIndex
+                if (response.value > 0 && response.value <= 2) {
+                    $("#uvIndex").removeClass("moderate")
+                    $("#uvIndex").removeClass("high")
+                    $("#uvIndex").removeClass("veryHigh")
+                    $("#uvIndex").removeClass("extreme")
+                    $("#uvIndex").addClass("low")
+                }
+
+                else if (response.value > 2 && response.value <= 5) {
+                    $("#uvIndex").removeClass("low")
+                    $("#uvIndex").removeClass("high")
+                    $("#uvIndex").removeClass("veryHigh")
+                    $("#uvIndex").removeClass("extreme")
+                    $("#uvIndex").addClass("moderate")
+
+                }
+
+                else if (response.value > 5 && response.value <= 7) {
+                    $("#uvIndex").removeClass("low")
+                    $("#uvIndex").removeClass("moderate")
+                    $("#uvIndex").removeClass("veryHigh")
+                    $("#uvIndex").removeClass("extreme")
+                    $("#uvIndex").addClass("high")
+                }
+
+                else if (response.value > 7 && response.value <= 10) {
+                    $("#uvIndex").removeClass("low")
+                    $("#uvIndex").removeClass("moderate")
+                    $("#uvIndex").removeClass("high")
+                    $("#uvIndex").removeClass("extreme")
+                    $("#uvIndex").addClass("veryHigh")
+
+                }
+
+                else if (response.value > 10) {
+                    $("#uvIndex").removeClass("low")
+                    $("#uvIndex").removeClass("moderate")
+                    $("#uvIndex").removeClass("high")
+                    $("#uvIndex").removeClass("veryHigh")
+                    $("#uvIndex").addClass("extreme")
+                }
+
 
             });
 
 
-
-
-
         }) //closes ajax call
 
-
+        // Call the fiveDay forecast funct whenever mainWeather() is called
         fiveDayForecast();
 
 
     } // closes main weather function
 
 
-    
 
 
 
 
+    // function to retrieve search history from local storage and render it to the page
     function renderSearchHistory() {
 
         if (localStorage.getItem("searchHistory")) {
@@ -233,11 +226,14 @@ $(document).ready(function () {
                 $("#recentSearchList").prepend(recentSearch)
 
             }
-
+            // Update the selectedCity variable with the last value of the search history so main weather can reference the correct city
+            selectedCity = searchHistoryArray[searchHistoryArray.length - 1]
+            mainWeather();
         }
+
     }
 
-
+    // function to build out recent search list and store it in search history
     function searchHistory() {
 
         ////////// BUILD OUT RECENT SEARCH LIST
@@ -256,6 +252,7 @@ $(document).ready(function () {
         // don't clear out the input
         event.preventDefault();
 
+        // update selectedCity to the value of the search box
         selectedCity = $("#selectedCity").val().trim()
 
         //check if there's a value, if not alert and ask for one
@@ -264,21 +261,16 @@ $(document).ready(function () {
             return
         }//closes if statement
 
-
-
-
-        console.log("saerch history function called on click")
+        //the SearchHistory shouldget updated when search button is clicked
         searchHistory();
 
 
-
-
-
-        ////// POPULATE MAIN WEATHER SECTION
+        ////// POPULATE MAIN WEATHER SECTION on click
         mainWeather();
 
-
     }); // closes on click of search
+
+
 
 
     /////// ON CLICK OF RECENT SEARCHES//////////
@@ -289,32 +281,18 @@ $(document).ready(function () {
         mainWeather();
 
 
+
     });// closes on click of recent searches
 
 
 
     /*TO DO:
  
-    1). Check if there's an existing locally stored search, if so prepend them in order, AND PRESENT THE LAST SEARCHED CITY FORECAST WHEN THE PAGE IS FIRST LOADED
-        DONE
-    2). Figure out the other two api calls
-
-    3). Should dynamically prepend each of the weather days in 5 day forecast to section below
-    4). need to figure out the icons
-    5). need to figure out how to incrememnt in moment.js (or maybe just get it from the api event who knows)
-    6). need to color code the UV index portion
     7). NEED TO ADD AN ICON NEXT TO THE H1 PORTION
     8). FIX SEARCH BUTTON SO IT'S POSITION IS ABSOLUTE COMPARED TO THE SEARCH BAR
     10). Need to cap recent searches at 10. (nice to have).
  
     */
-
-
-
-
-
-
-
 
 
 

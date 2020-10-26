@@ -11,6 +11,35 @@
     <link rel="stylesheet" href="./style.css">
     <!--link to my style sheet needs to go last-->
 
+
+    <style>
+        .low {
+            background-color: green;
+            color: white;
+        }
+
+        .moderate {
+            background-color: yellow;
+            /*NOT SETTING TEXT COLOR TO WHITE BECAUSE IT'S HARD TO READ*/
+        }
+
+        .high {
+            background-color: orange;
+            color: white;
+
+        }
+
+        .veryHigh {
+            background-color: red;
+            color: white;
+        }
+
+        .extreme {
+            background-color: purple;
+            color: white;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -24,77 +53,76 @@
     </div>
 
 
-   <!-- <div class="container">-->
+    <!-- <div class="container">-->
 
-        <!-- Row for all page content-->
-        <div class="row">
+    <!-- Row for all page content-->
+    <div class="row">
 
-            <!-- column definition for search and recent history-->
-            <div class="col-sm-4">
-                <div class="row">
-                    <div class="col-sm-12 col pl-md-1" style="background-color: lightgray;">
+        <!-- column definition for search and recent history-->
+        <div class="col-sm-4">
+            <div class="row">
+                <div class="col-sm-12 col pl-md-1" style="background-color: lightgray;">
 
-                        <form class="form-inline">
-                            <div class="form-group mx-sm-3 mb-2">
-                                <input type="text" class="form-control" id="selectedCity"
-                                    placeholder="Enter a City here">
-                            </div>
-                            <button id="searchBtn" type="submit" class="btn btn-primary mb-2">Search</button>
-                        </form>
-
-
-                        <!--RECENT SEARCH LIST-->
-                        <div class="row">
-                            <ul id="recentSearchList" class="list-group col-sm-11 ml-md-4">
-
-                            </ul>
+                    <form class="form-inline">
+                        <div class="form-group mx-sm-3 mb-2">
+                            <input type="text" class="form-control" id="selectedCity" placeholder="Enter a City here">
                         </div>
+                        <button id="searchBtn" type="submit" class="btn btn-primary mb-2">Search</button>
+                    </form>
 
 
+                    <!--RECENT SEARCH LIST-->
+                    <div class="row">
+                        <ul id="recentSearchList" class="list-group col-sm-11 ml-md-4">
 
+                        </ul>
                     </div>
+
+
+
                 </div>
             </div>
-            <!-- Column definition for Weather Display area-->
-            <div class="col-sm-8 col-lg-8">
-                <!--Row Definition for Current Day Weather-->
-                <div class="row">
-                    <div class=" col-sm-12 ml-md-4 pl-md-4"
-                        style=" border-style:solid; background-color: white; border-radius: 25px; border-width: 1px;">
-                        <div class="row">
-                            <h1 id="cityName">CITY NAME (MM/DD/YYYY)</h1>
-                        </div>
-                        <br>
-                        <div class="row">
-                            <div id="temp">test</div>
-                        </div>
-
-                        <br>
-
-                        <div class="row">
-
-                            <div id="humidity">test</div>
-                        </div>
-                        <br>
-
-                        <div class="row">
-                            <div id="windSpeed">test</div>
-                        </div>
-                        <br>
-                        <div class="row">
-                            <div id="uvIndex">test</div>
-                        </div>
-
-                        <br>
-
-
+        </div>
+        <!-- Column definition for Weather Display area-->
+        <div class="col-sm-8 col-lg-8">
+            <!--Row Definition for Current Day Weather-->
+            <div class="row">
+                <div class=" col-sm-12 ml-md-4 pl-md-4"
+                    style=" border-style:solid; background-color: white; border-radius: 25px; border-width: 1px;">
+                    <div class="row">
+                        <h1 id="cityName">CITY NAME (MM/DD/YYYY)</h1>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div id="temp">test</div>
                     </div>
 
-                </div>
-                <br>
-                <div id="fiveDayContainer" class="row">
+                    <br>
 
-                    <!-- <div class="col-sm-2">
+                    <div class="row">
+
+                        <div id="humidity">test</div>
+                    </div>
+                    <br>
+
+                    <div class="row">
+                        <div id="windSpeed">test</div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div id="uvIndex">test</div>
+                    </div>
+
+                    <br>
+
+
+                </div>
+
+            </div>
+            <br>
+            <div id="fiveDayContainer" class="row">
+
+                <!-- <div class="col-sm-2">
 
                         <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
                             <div class="card-body">
@@ -105,18 +133,19 @@
 
                     </div> -->
 
-                   
-                    
 
 
 
 
 
-                </div>
+
+
             </div>
-
         </div>
-    <!--</div> --> <!-- closes container-->
+
+    </div>
+    <!--</div> -->
+    <!-- closes container-->
 
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"
