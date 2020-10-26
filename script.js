@@ -1,7 +1,5 @@
 // doc ready function
 $(document).ready(function () {
-    console.log("js load success, doc is ready")
-
 
     ////////// ASSIGNMENT CODE///////////
 
@@ -18,10 +16,13 @@ $(document).ready(function () {
 
     // If there's existing search history render it to the page
     if (localStorage.getItem("searchHistory")) {
-        console.log("render searchHistory function called")
         renderSearchHistory();
     } //closes check for existing search history
 
+
+
+
+//////////////BEGIN FUNCTION DEFINITIONS/////////////////////////
 
 
     // function definition to populate cards with 5 day forecast
@@ -34,7 +35,7 @@ $(document).ready(function () {
 
 
         //Build queryURL for 5 day forecast
-        var fiveDayUrl = 'http://api.openweathermap.org/data/2.5/forecast?q=' + selectedCity + '&units=imperial&appid=' + apiKey
+        var fiveDayUrl = 'https://api.openweathermap.org/data/2.5/forecast?q=' + selectedCity + '&units=imperial&appid=' + apiKey
 
 
         $.ajax({
@@ -59,7 +60,7 @@ $(document).ready(function () {
                     }
 
                     fiveDayArray.push(fiveDayObject)
-                    console.log(fiveDayArray)
+
                 }
 
 
@@ -82,7 +83,7 @@ $(document).ready(function () {
                 var forecastCardTemp = $("<p>").addClass("card-text forecastCardTemp")
                 var forecastCardIcon = $("<img>").addClass("card-text forecastCardIcon")
                 var forecastCardHumidity = $("<p>").addClass("card-text forecastCardHumidity")
-                var forecastCardIconURL = 'http://openweathermap.org/img/wn/' + fiveDayArray[i].icon + '@2x.png'
+                var forecastCardIconURL = 'https://openweathermap.org/img/wn/' + fiveDayArray[i].icon + '@2x.png'
                 forecastCardBody.append(forecastCardTitle)
                 forecastCardBody.append(forecastCardIcon)
                 forecastCardBody.append(forecastCardTemp)
@@ -111,24 +112,27 @@ $(document).ready(function () {
     };// closes five day forecast function
 
 
+
+
+
     ////// function to populate main weather section
     function mainWeather() {
         //building the query url based on the value of the searched city with Imperial Units
-        var queryURL = 'http://api.openweathermap.org/data/2.5/weather?q=' + selectedCity + '&appid=' + apiKey + '&units=imperial'
+        var queryURL = 'https://api.openweathermap.org/data/2.5/weather?q=' + selectedCity + '&appid=' + apiKey + '&units=imperial'
 
         // Get Weather and Populate sections
         $.ajax({
             url: queryURL,
             method: "GET",
+            //if there's an error, log it and alert them to type in a valid city name
             error: function (err) {
                 console.error("Ajax error in request: " + JSON.stringify(err, null, 2))
                 alert("Please type in a valid city name");
             }
         }).then(function (response) {
-            console.log("main weather response is below")
-            console.log(response)
-            var mainWeatherIcon = response.weather[0].icon
-            var mainWeatherIconUrl = 'http://openweathermap.org/img/wn/' + mainWeatherIcon + '@2x.png'
+
+            // var mainWeatherIcon = response.weather[0].icon
+            var mainWeatherIconUrl = 'https://openweathermap.org/img/wn/' + response.weather[0].icon + '@2x.png'
 
             $('#cityName').text(selectedCity + '  ' + currentDate)
             $("#mainWeatherIcon").attr("src", mainWeatherIconUrl)
@@ -138,9 +142,6 @@ $(document).ready(function () {
             cityLat = response.coord.lat
             cityLong = response.coord.lon
 
-            console.log(response);
-
-
             // Query URL for nested UV API call
             var uvIndexUrl = 'https://api.openweathermap.org/data/2.5/uvi?lat=' + cityLat + '&lon=' + cityLong + '&appid=' + apiKey
 
@@ -149,8 +150,6 @@ $(document).ready(function () {
                 method: "GET"
 
             }).then(function (response) {
-                console.log('the next line is the uv index response')
-                console.log(response)
                 // populate uvIndex element with the uv index value
                 $("#uvIndex").text("UV Index: " + response.value)
                 // Conditional checks to dynamically apply styling for uvIndex
@@ -197,7 +196,7 @@ $(document).ready(function () {
                 }
 
 
-            });
+            }); // closes nested ajax call
 
 
         }) //closes ajax call
@@ -212,7 +211,6 @@ $(document).ready(function () {
 
 
 
-
     // function to retrieve search history from local storage and render it to the page
     function renderSearchHistory() {
 
@@ -221,28 +219,28 @@ $(document).ready(function () {
             searchHistoryArray = JSON.parse(localStorage.getItem("searchHistory"))
 
             for (var i = 0; i < searchHistoryArray.length; i++) {
-                console.log("search history array value is: " + searchHistoryArray[i])
                 var recentSearch = $("<li>").text(searchHistoryArray[i])
                 recentSearch.attr("class", "recentCity list-group-item")
                 $("#recentSearchList").prepend(recentSearch)
 
-            }
+            } // closes for loop for writing search history to page
+
             // Update the selectedCity variable with the last value of the search history so main weather can reference the correct city
             selectedCity = searchHistoryArray[searchHistoryArray.length - 1]
             mainWeather();
-        }
 
-    }
+        }// closes check for local storage
+
+    }//closes renderSearchHistory Function
+
+
+
 
     // function to build out recent search list and store it in search history
     function searchHistory() {
 
         //limit recent searches to 10 and if it reaches 10 or exceeds it then reload so render search only writes 10 to page
         if (searchHistoryArray.length >= 10) {
-
-            // var firstIndex = '.'+searchHistoryArray[0].trim()            
-            // console.warn("first index value is " +firstIndex)
-            // $("li").remove(String(firstIndex));
 
             searchHistoryArray.shift()
             var recentSearch = $("<li>").text(selectedCity)
@@ -261,9 +259,18 @@ $(document).ready(function () {
             $("#recentSearchList").prepend(recentSearch)
             searchHistoryArray.push(selectedCity)
             localStorage.setItem("searchHistory", JSON.stringify(searchHistoryArray))
-        }
+        } // closes conditional check for search limit
 
-    }
+    }// closes search history function
+
+
+
+
+
+
+
+
+/////////// ON CLICKS TO CALL THE MAIN FUNCTIONS
 
 
     //////ON CLICK OF SEARCH///////////
@@ -280,7 +287,7 @@ $(document).ready(function () {
             return
         }//closes if statement
 
-        //the SearchHistory shouldget updated when search button is clicked
+        //the SearchHistory should get updated when search button is clicked
         searchHistory();
 
 
@@ -291,27 +298,11 @@ $(document).ready(function () {
 
 
 
-
     /////// ON CLICK OF RECENT SEARCHES//////////
     $("#recentSearchList").on("click", function (event) {
-        // TO DO FIGURE OUT HOW TO DO THIS IN JQUERY SHOULD SOMEHOW BE WITH $(this) but it wasn't working -__-   )
         selectedCity = event.target.innerText
-        console.log("the value of this is " + temp)
         mainWeather();
-
-
-
     });// closes on click of recent searches
-
-
-
-    /*TO DO:
- 
-    7). NEED TO ADD AN ICON NEXT TO THE H1 PORTION
-    8). FIX SEARCH BUTTON SO IT'S POSITION IS ABSOLUTE COMPARED TO THE SEARCH BAR
-    10). Need to cap recent searches at 10. (nice to have).
- 
-    */
 
 
 
