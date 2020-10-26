@@ -127,10 +127,11 @@ $(document).ready(function () {
         }).then(function (response) {
             console.log("main weather response is below")
             console.log(response)
+            var mainWeatherIcon = response.weather[0].icon
+            var mainWeatherIconUrl = 'http://openweathermap.org/img/wn/' + mainWeatherIcon  + '@2x.png'
             
-            var mainWeatherIconUrl = 'http://openweathermap.org/img/wn/' + response.weather[0].icon + '@2x.png'
-
             $('#cityName').text(selectedCity + '  ' + currentDate )
+            $("#mainWeatherIcon").attr("src", mainWeatherIconUrl)
             $("#temp").text("Temperature: " + response.main.temp + '\xB0F')
             $("#humidity").text("Humidity: " + response.main.humidity + '%')
             $("#windSpeed").text("Wind Speed: " + response.wind.speed + 'MPH')
