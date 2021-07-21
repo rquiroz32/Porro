@@ -70,7 +70,7 @@ $(document).ready(function () {
             //use array of 5 day forecast to populate html elements in 5 day forecast section
             for (i = 0; i < fiveDayArray.length; i++) {
 
-                var forecastDiv = $('<div>').addClass("col-sm-2 forecastDiv")
+                var forecastDiv = $('<div>').addClass("col-sm-3 forecastDiv")
                 var forecastCard = $("<div>").addClass("card text-white bg-primary mb-3 forecastCard")
                 forecastCard.attr("style", "max-width: 18rem;")
                 forecastDiv.append(forecastCard)
