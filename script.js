@@ -70,7 +70,7 @@ $(document).ready(function () {
             //use array of 5 day forecast to populate html elements in 5 day forecast section
             for (i = 0; i < fiveDayArray.length; i++) {
 
-                var forecastDiv = $('<div>').addClass("col-sm-3 forecastDiv")
+                var forecastDiv = $('<div>').addClass("col-sm forecastDiv")
                 var forecastCard = $("<div>").addClass("card text-white bg-primary mb-3 forecastCard")
                 forecastCard.attr("style", "max-width: 18rem;")
                 forecastDiv.append(forecastCard)
@@ -240,7 +240,7 @@ $(document).ready(function () {
     function searchHistory() {
 
         //limit recent searches to 10 and if it reaches 10 or exceeds it then reload so render search only writes 10 to page
-        if (searchHistoryArray.length >= 10) {
+        if (searchHistoryArray.length >= 5) {
 
             searchHistoryArray.shift()
             var recentSearch = $("<li>").text(selectedCity)
